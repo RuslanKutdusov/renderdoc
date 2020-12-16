@@ -424,7 +424,12 @@ static void ConvertToMeshOutputCompute(const ShaderReflection &refl, const SPIRV
                    end2 = editor.End(rdcspv::Section::Debug);
       it < end2; ++it)
   {
-    if(it.opcode() == rdcspv::Op::Name)
+    // remove OpModuleProcessed because invalid SPIR-V code might be generated which leads to crashes on AMD drivers
+    if(it.opcode() == rdcspv::Op::ModuleProcessed)
+    {
+      editor.Remove(it);
+    }
+    else if(it.opcode() == rdcspv::Op::Name)
     {
       rdcspv::OpName name(it);
 
